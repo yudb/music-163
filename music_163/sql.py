@@ -5,25 +5,25 @@ import pymysql.cursors
 
 connection = pymysql.connect(host='localhost',
                              user='root',
-                             password='1234',
-                             db='test',
+                             password='123456',
+                             db='metadata',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
 
 
 # 保存评论
-def insert_comments(music_id, comments, detail, connection0):
+def insert_comments(music_id, comments, detail,likedCount, connection0):
     with connection0.cursor() as cursor:
-        sql = "INSERT INTO `comments` (`MUSIC_ID`, `COMMENTS`, `DETAILS`) VALUES (%s, %s, %s)"
-        cursor.execute(sql, (music_id, comments, detail))
+        sql = "INSERT INTO `comments` (`MUSIC_ID`, `COMMENTS`, `DETAILS`,likedCount) VALUES (%s, %s, %s,%s)"
+        cursor.execute(sql, (music_id, comments, detail,likedCount))
     connection0.commit()
 
 
 # 保存音乐
 def insert_music(music_id, music_name, album_id):
     with connection.cursor() as cursor:
-        sql = "INSERT INTO `musics` (`MUSIC_ID`, `MUSIC_NAME`, `ALBUM_ID`) VALUES (%s, %s, %s)"
-        cursor.execute(sql, (music_id, music_name, album_id))
+        sql = "INSERT INTO `musics` (`MUSIC_ID`, `MUSIC_NAME`, `ALBUM_ID`) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE `MUSIC_NAME`=%s,`ALBUM_ID`=%s"
+        cursor.execute(sql, (music_id, music_name, album_id, music_name, album_id))
     connection.commit()
 
 
@@ -38,8 +38,8 @@ def insert_album(album_id, artist_id):
 # 保存歌手
 def insert_artist(artist_id, artist_name):
     with connection.cursor() as cursor:
-        sql = "INSERT INTO `artists` (`ARTIST_ID`, `ARTIST_NAME`) VALUES (%s, %s)"
-        cursor.execute(sql, (artist_id, artist_name))
+        sql = "INSERT INTO `artists` (`ARTIST_ID`, `ARTIST_NAME`) VALUES (%s, %s) ON DUPLICATE KEY UPDATE `ARTIST_NAME`=%s"
+        cursor.execute(sql, (artist_id, artist_name,artist_name))
     connection.commit()
 
 

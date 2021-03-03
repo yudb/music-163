@@ -4,6 +4,8 @@
 import requests
 from bs4 import BeautifulSoup
 from music_163 import sql
+import time
+
 
 headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -24,6 +26,8 @@ headers = {
 def save_artist(group_id, initial):
     params = {'id': group_id, 'initial': initial}
     r = requests.get('http://music.163.com/discover/artist/cat', params=params)
+
+    print("当前正在爬取"+r.url+"页面")
 
     # 网页解析
     soup = BeautifulSoup(r.content.decode(), 'html.parser')
@@ -50,9 +54,13 @@ def save_artist(group_id, initial):
             # 打印错误日志
             print(e)
 
+#华语男歌手,华语女歌手,...,其他组合/乐队
+gg =[1001,1002,1003,2001,2002,2003,6001,6002,6003,7001,7002,7003,4001,4002,4003]
 
-gg = 4003
+for g in gg:
+    save_artist(g, 0)
+    for i in range(65, 91):
+        save_artist(g, i)
+        #每爬取一页,休息2秒
+        time.sleep(2)
 
-save_artist(gg, 0)
-for i in range(65, 91):
-    save_artist(gg, i)
